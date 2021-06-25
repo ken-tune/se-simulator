@@ -1,0 +1,9 @@
+FROM node:latest
+
+RUN git clone https://github.com/ken-tune/se-simulator.git
+
+ENV DESTINATION_HOST=trade-server
+WORKDIR /se-simulator/tradeGen
+
+# Keep it running
+ENTRYPOINT ["node", "tradeGenerator.js"]
