@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: trade-server
+  labels: {
+    app: trade-server
+  }
+spec:
+  containers:
+    - image: ktune/se-simulator:trade-server
+      name: trade-server
+      ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trade-server
+spec:
+  selector:
+    app: trade-server
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: trade-data-gen
+spec:
+  containers:
+    - image: ktune/se-simulator:tradeGen
+      name: trade-data-gen
