@@ -1,0 +1,10 @@
+FROM centos:7
+
+RUN yum -y update && yum -y install java-1.8.0-openjdk git maven curl telnet
+RUN git clone https://github.com/ken-tune/se-simulator.git
+RUN cd /se-simulator/TradeStoreServer && mvn clean compile assembly:single
+
+WORKDIR /se-simulator/TradeStoreServer
+
+#ENTRYPOINT ["tail","-f","/dev/null"]
+ENTRYPOINT ["java", "-jar", "target/TradeStoreServer-1.0-SNAPSHOT-jar-with-dependencies.jar"]

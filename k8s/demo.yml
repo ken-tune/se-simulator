@@ -1,26 +1,27 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: trade-server
+  name: trade-store-server
   labels: {
-    app: trade-server
+    app: trade-store-server
   }
 spec:
   containers:
-    - image: ktune/se-simulator:trade-server
-      name: trade-server
+    - image: ktune/se-simulator:trade-store-server
+      name: trade-store-server
       ports:
         - containerPort: 8080
           name: http
           protocol: TCP
+      imagePullPolicy: Always
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: trade-server
+  name: trade-store-server
 spec:
   selector:
-    app: trade-server
+    app: trade-store-server
   ports:
     - protocol: TCP
       port: 8080
@@ -31,7 +32,7 @@ kind: ReplicaSet
 metadata:
   name: trade-data-gen
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: trade-data-gen
@@ -47,14 +48,28 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: zookeeper
+  name: aerospike
   labels: {
-    app: zookeeper
+    app: aerospike
   }
 spec:
   containers:
-    - image: wurstmeister/zookeeper
-      name: zookeeper
+    - image: aerospike:ce-5.6.0.5
+      name: aerospike
       ports:
-        - containerPort: 2181
+        - containerPort: 3000
           protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aerospike
+spec:
+  selector:
+    app: aerospike
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+
+
