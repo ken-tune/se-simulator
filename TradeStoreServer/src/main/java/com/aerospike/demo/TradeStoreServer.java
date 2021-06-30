@@ -37,6 +37,7 @@ public class TradeStoreServer {
         httpServer.createContext("/", new RootHandler());
         httpServer.setExecutor(null);
         httpServer.start();
+        System.out.println("Running on "+Constants.WEBSERVER_PORT);
     }
 
     // Handle trade messages
