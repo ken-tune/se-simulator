@@ -12,6 +12,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
+        <junit-jupiter.version>5.7.2</junit-jupiter.version>
     </properties>
 
     <groupId>com.aerospike.demo</groupId>
@@ -29,6 +30,12 @@
             <groupId>com.aerospike</groupId>
             <artifactId>aerospike-client</artifactId>
             <version>${aerospike-client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
