@@ -12,9 +12,9 @@ const DESTINATION_PORT = util.getEnvironmentValue("DESTINATION_PORT",8080)
 
 // Stock Config
 var stockConfigList=[];
-stockConfigList[0] = stockConfig("A.COM",32,4,50,10000); 
-stockConfigList[1] = stockConfig("B.COM",124,17,500,50000); 
-stockConfigList[2] = stockConfig("C.COM",75,7,700,100000); 
+stockConfigList[0] = stockConfig("A.COM",32,0.3,50,10000); 
+stockConfigList[1] = stockConfig("B.COM",124,0.2,500,50000); 
+stockConfigList[2] = stockConfig("C.COM",75,0.1,700,100000); 
 
 // Utiltiy function to create a stock config object
 function stockConfig(stockTicker,meanPrice,sqrtPriceVariance,minTradeVol,maxTradeVol){
@@ -39,6 +39,17 @@ const options = {
   }
 }
 
+// Use this version of the function for debug purposes
+function nextIterationDebug(){
+	for(var i = 0;i<TRADES_PER_ITERATION;i++){
+		var selectedStock = stockConfigList[stats.getRandomInt(stockConfigList.length)]
+		console.log(tradeDataGen.simulatedTrade(selectedStock));
+	}
+	setTimeout(nextIterationDebug,1000 / ITERATIONS_PER_SECOND);
+}
+
+// nextIterationDebug();
+
 function nextIteration(){
 	for(var i = 0;i<TRADES_PER_ITERATION;i++){
 		var selectedStock = stockConfigList[stats.getRandomInt(stockConfigList.length)]
@@ -51,12 +62,4 @@ function nextIteration(){
 	setTimeout(nextIteration,Math.ceil(1000 / ITERATIONS_PER_SECOND))
 }
 
-nextIteration();
-
-
-// function nextIteration(){
-// 	console.log(getRandomTrade());
-// 	setTimeout(nextIteration,1000);
-// }
-
-// nextIteration();
+ nextIteration();
