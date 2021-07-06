@@ -1,14 +1,16 @@
 #!/bin/bash
 
-docker stop trade-data-gen 
-docker rm trade-data-gen 
-docker stop trade-server
-docker rm trade-server
-docker image rm trade-server
+kubectl apply -f k8s/demo.yml
+echo
+echo Wait till all pods in the running state then ctrl-c
+echo
+echo This will take around 50 seconds
+echo
+sleep 10
+while [ 1 ]
+do
+	kubectl get pods
+	sleep 1
+	echo
+done
 
-cd build
-./build.sh 
-cd ..
-
-docker run -d --name trade-server trade-server
-docker run --name trade-data-gen trade-data-gen
