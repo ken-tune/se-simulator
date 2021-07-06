@@ -254,7 +254,9 @@ public class TradeStoreServer {
         for(int i=0;i<records.length;i++) {
             if(records[i] != null) {
                 Map<String, Object> contractPriceMap = (Map<String, Object>) records[i].getMap(Constants.CONTRACT_PRICE_SUMMARY_BIN).get(price);
-                volume += (Long) contractPriceMap.get(Constants.VOLUME_FIELD_NAME);
+                if(contractPriceMap != null) {
+                    volume += (Long) contractPriceMap.get(Constants.VOLUME_FIELD_NAME);
+                }
             }
         }
         return volume;
@@ -271,7 +273,9 @@ public class TradeStoreServer {
         for(int i=0;i<records.length;i++){
             if(records[i] != null) {
                 Map<String, Object> contractPriceMap = (Map<String, Object>) records[i].getMap(Constants.CONTRACT_PRICE_SUMMARY_BIN).get(price);
-                maxTimestamp = Math.max((Long) ((List)contractPriceMap.get(Constants.TIMESTAMP_FIELD_NAME)).get(0), maxTimestamp);
+                if(contractPriceMap != null) {
+                    maxTimestamp = Math.max((Long) ((List) contractPriceMap.get(Constants.TIMESTAMP_FIELD_NAME)).get(0), maxTimestamp);
+                }
             }
         }
         return maxTimestamp;

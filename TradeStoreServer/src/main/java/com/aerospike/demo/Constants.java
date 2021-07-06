@@ -31,7 +31,7 @@ public class Constants {
     public static final String AEROSPIKE_NAMESPACE_PROPERTY_NAME = "AEROSPIKE_NAMESPACE";
     public static String AEROSPIKE_NAMESPACE = (String)properties.get(AEROSPIKE_NAMESPACE_PROPERTY_NAME);
 
-    public static final String AEROSPIKE_TRADE_SET_PROPERTY_NAME = "AEROSPIKE_SET";
+    public static final String AEROSPIKE_TRADE_SET_PROPERTY_NAME = "AEROSPIKE_TRADE_SET";
     public static String AEROSPIKE_TRADE_SET = (String)properties.get(AEROSPIKE_TRADE_SET_PROPERTY_NAME);
 
     public static final String WEBSERVER_PORT_PROPERTY_NAME = "WEBSERVER_PORT";
