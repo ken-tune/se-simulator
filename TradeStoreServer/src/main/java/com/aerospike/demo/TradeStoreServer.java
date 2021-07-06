@@ -10,7 +10,10 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.net.InetSocketAddress;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.*;
 
@@ -113,7 +116,7 @@ public class TradeStoreServer {
     }
 
     void updateContractRecord(JsonNode trade){
-        Key key = contractRecordASKeyForTicker(trade.get(Constants.TICKER_FIELD_NAME).asText());
+        Key key = contractRecordASKeyForTrade(trade);
         long tradeVolume = trade.get(Constants.VOLUME_FIELD_NAME).asLong();
         double tradePrice = trade.get(Constants.PRICE_FIELD_NAME).asDouble();
         long timestamp = trade.get(Constants.TIMESTAMP_FIELD_NAME).asLong();
@@ -158,12 +161,35 @@ public class TradeStoreServer {
 
     /**
      * Return the Aerospike Key for a contract record with a given ticker
-     * @param ticker
+     * @param trade
      * @return
      */
-    static Key contractRecordASKeyForTicker(String ticker){
-        return new Key(Constants.AEROSPIKE_NAMESPACE,Constants.AEROSPIKE_CONTRACT_SUMMARY_SET,ticker);
+    static Key contractRecordASKeyForTrade(JsonNode trade){
+        String stringToHash = String.format("%s%f%d%d",trade.get(Constants.TICKER_FIELD_NAME).asText(),trade.get(Constants.PRICE_FIELD_NAME).asDouble(),
+                trade.get(Constants.VOLUME_FIELD_NAME).asLong(),trade.get(Constants.TIMESTAMP_FIELD_NAME).asLong());
 
+        // Hash the trade into a number between 0 & CONTRACT_RECORD_SHARD_COUNT -1
+        MessageDigest md5 = null;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        }
+        catch(NoSuchAlgorithmException e){
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+        md5.update(stringToHash.getBytes());
+        BigInteger digest = new BigInteger(1,md5.digest());
+        int shardNo = digest.mod(BigInteger.valueOf(Constants.CONTRACT_RECORD_SHARD_COUNT)).intValue();
+        return new Key(Constants.AEROSPIKE_NAMESPACE,Constants.AEROSPIKE_CONTRACT_SUMMARY_SET,
+                String.format("%s-%d",trade.get(Constants.TICKER_FIELD_NAME).asText(),shardNo));
+    }
+
+    static Key[] contractRecordASKeysForTicker(String ticker){
+        Key[] keys = new Key[Constants.CONTRACT_RECORD_SHARD_COUNT];
+        for(int shardNo=0;shardNo<Constants.CONTRACT_RECORD_SHARD_COUNT;shardNo++)
+        keys[shardNo] = new Key(Constants.AEROSPIKE_NAMESPACE,Constants.AEROSPIKE_CONTRACT_SUMMARY_SET,
+                String.format("%s-%d",ticker,shardNo));
+        return keys;
     }
 
     /**
@@ -172,10 +198,14 @@ public class TradeStoreServer {
      * @return
      */
     public long getAggregateVolumeForTicker(String ticker){
-        Record r = aerospikeClient.operate(aerospikeClient.writePolicyDefault,TradeStoreServer.contractRecordASKeyForTicker(ticker),
-                MapOperation.getByKey(Constants.CONTRACT_RECORD_BIN,Value.get(Constants.VOLUME_FIELD_NAME),MapReturnType.VALUE));
-        return r.getLong(Constants.CONTRACT_RECORD_BIN);
-
+        Record[] records = aerospikeClient.get(aerospikeClient.batchPolicyDefault,contractRecordASKeysForTicker(ticker));
+        long volume = 0;
+        for(int i=0;i<records.length;i++){
+            if(records[i] != null) {
+                volume += (Long) records[i].getMap(Constants.CONTRACT_RECORD_BIN).get(Constants.VOLUME_FIELD_NAME);
+            }
+        }
+        return volume;
     }
 
     /**
@@ -184,9 +214,15 @@ public class TradeStoreServer {
      * @return
      */
     public double getHighestPriceTradedForTicker(String ticker){
-        Record r = aerospikeClient.operate(aerospikeClient.writePolicyDefault,TradeStoreServer.contractRecordASKeyForTicker(ticker),
-                ListOperation.getByIndex(Constants.CONTRACT_RECORD_BIN,0,ListReturnType.VALUE, CTX.mapKey(Value.get(Constants.PRICE_FIELD_NAME))));
-        return r.getDouble(Constants.CONTRACT_RECORD_BIN);
+        Record[] records = aerospikeClient.get(aerospikeClient.batchPolicyDefault,contractRecordASKeysForTicker(ticker));
+        double maxPrice = 0;
+        for(int i=0;i<records.length;i++){
+            if(records[i] != null) {
+                double candidateMaxPrice = (Double) ((List)records[i].getMap(Constants.CONTRACT_RECORD_BIN).get(Constants.PRICE_FIELD_NAME)).get(0);
+                maxPrice = Math.max(candidateMaxPrice, maxPrice);
+            }
+        }
+        return maxPrice;
     }
 
     /**
@@ -195,9 +231,15 @@ public class TradeStoreServer {
      * @return
      */
     public long getMostRecentTradeTimestampForTicker(String ticker){
-        Record r = aerospikeClient.operate(aerospikeClient.writePolicyDefault,TradeStoreServer.contractRecordASKeyForTicker(ticker),
-                ListOperation.getByIndex(Constants.CONTRACT_RECORD_BIN,0,ListReturnType.VALUE, CTX.mapKey(Value.get(Constants.TIMESTAMP_FIELD_NAME))));
-        return r.getLong(Constants.CONTRACT_RECORD_BIN);
+        Record[] records = aerospikeClient.get(aerospikeClient.batchPolicyDefault,contractRecordASKeysForTicker(ticker));
+        long maxTimestamp = 0;
+        for(int i=0;i<records.length;i++){
+            if(records[i] != null) {
+                long candidateMaxTimestamp = (Long) ((List)records[i].getMap(Constants.CONTRACT_RECORD_BIN).get(Constants.TIMESTAMP_FIELD_NAME)).get(0);
+                maxTimestamp = Math.max(candidateMaxTimestamp, maxTimestamp);
+            }
+        }
+        return maxTimestamp;
     }
 
     /**
@@ -207,11 +249,15 @@ public class TradeStoreServer {
      * @return
      */
     public long getAggregateVolumeForTickerAndPrice(String ticker,double price){
-        Record r = aerospikeClient.operate(aerospikeClient.writePolicyDefault,TradeStoreServer.contractRecordASKeyForTicker(ticker),
-                MapOperation.getByKey(Constants.CONTRACT_PRICE_SUMMARY_BIN,Value.get(Constants.VOLUME_FIELD_NAME),MapReturnType.VALUE,CTX.mapKey(Value.get(price))));
-
-        return r.getLong(Constants.CONTRACT_PRICE_SUMMARY_BIN);
-
+        Record[] records = aerospikeClient.get(aerospikeClient.batchPolicyDefault,contractRecordASKeysForTicker(ticker));
+        long volume = 0;
+        for(int i=0;i<records.length;i++) {
+            if(records[i] != null) {
+                Map<String, Object> contractPriceMap = (Map<String, Object>) records[i].getMap(Constants.CONTRACT_PRICE_SUMMARY_BIN).get(price);
+                volume += (Long) contractPriceMap.get(Constants.VOLUME_FIELD_NAME);
+            }
+        }
+        return volume;
     }
 
     /**
@@ -220,9 +266,14 @@ public class TradeStoreServer {
      * @return
      */
     public long getMostRecentTradeTimestampForTickerAndPrice(String ticker,double price){
-        Record r = aerospikeClient.operate(aerospikeClient.writePolicyDefault,TradeStoreServer.contractRecordASKeyForTicker(ticker),
-                ListOperation.getByIndex(Constants.CONTRACT_PRICE_SUMMARY_BIN,0,ListReturnType.VALUE, CTX.mapKey(Value.get(price)),CTX.mapKey(Value.get(Constants.TIMESTAMP_FIELD_NAME))));
-        return r.getLong(Constants.CONTRACT_PRICE_SUMMARY_BIN);
+        Record[] records = aerospikeClient.get(aerospikeClient.batchPolicyDefault,contractRecordASKeysForTicker(ticker));
+        long maxTimestamp = 0;
+        for(int i=0;i<records.length;i++){
+            if(records[i] != null) {
+                Map<String, Object> contractPriceMap = (Map<String, Object>) records[i].getMap(Constants.CONTRACT_PRICE_SUMMARY_BIN).get(price);
+                maxTimestamp = Math.max((Long) ((List)contractPriceMap.get(Constants.TIMESTAMP_FIELD_NAME)).get(0), maxTimestamp);
+            }
+        }
+        return maxTimestamp;
     }
-
 }

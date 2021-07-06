@@ -43,11 +43,13 @@ public class Constants {
     public static final String AEROSPIKE_CONTRACT_SUMMARY_SET_PROPERTY_NAME = "AEROSPIKE_CONTRACT_SUMMARY_SET";
     public static String AEROSPIKE_CONTRACT_SUMMARY_SET = (String)properties.get(AEROSPIKE_CONTRACT_SUMMARY_SET_PROPERTY_NAME);
 
+    public static final String CONTRACT_RECORD_SHARD_COUNT_PROPERTY_NAME = "CONTRACT_RECORD_SHARD_COUNT";
+    public static int CONTRACT_RECORD_SHARD_COUNT = Integer.parseInt((String)properties.get(CONTRACT_RECORD_SHARD_COUNT_PROPERTY_NAME));
+
     public static final String CONTRACT_RECORD_BIN = "contractRecord";
     public static final String CONTRACT_PRICE_SUMMARY_BIN = "cntrctPriceSum";
     public static final String TICKER_FIELD_NAME = "ticker";
     public static final String VOLUME_FIELD_NAME = "volume";
     public static final String PRICE_FIELD_NAME = "price";
     public static final String TIMESTAMP_FIELD_NAME = "timestamp";
-
 }
