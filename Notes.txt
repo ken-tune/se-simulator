@@ -1,0 +1,25 @@
+Next Steps
+----------
+
+How do you change the sharding dynamically
+Better pricing evolution
+Measuring latency on batch read
+Running in an AWS context scalably
+Moving into AS GitHub
+Put together a small webserver showing prices
+Move summary records to in memory namespace
+
+DONE
+
+Trade generator is done
+Re-arrange k8s so asset order creation makes more sense
+TradeStoreServer as a service - can you scale it
+
+
+TESTS
+-----
+
+Good insert - OK
+Good insert w/out database
+Non-parsable JSON OK
+Not accepted JSON i.e. with incorrect fields / types
