@@ -198,6 +198,7 @@ public class TradeStoreServer {
      * @return
      */
     public long getAggregateVolumeForTicker(String ticker){
+        long timestamp = System.currentTimeMillis();
         Record[] records = aerospikeClient.get(aerospikeClient.batchPolicyDefault,contractRecordASKeysForTicker(ticker));
         long volume = 0;
         for(int i=0;i<records.length;i++){
@@ -205,6 +206,7 @@ public class TradeStoreServer {
                 volume += (Long) records[i].getMap(Constants.CONTRACT_RECORD_BIN).get(Constants.VOLUME_FIELD_NAME);
             }
         }
+        System.out.println(String.format("Aggregate volume retrieval for %s took %d ms",ticker,System.currentTimeMillis() - timestamp));
         return volume;
     }
 
@@ -214,6 +216,7 @@ public class TradeStoreServer {
      * @return
      */
     public double getHighestPriceTradedForTicker(String ticker){
+        long timestamp = System.currentTimeMillis();
         Record[] records = aerospikeClient.get(aerospikeClient.batchPolicyDefault,contractRecordASKeysForTicker(ticker));
         double maxPrice = 0;
         for(int i=0;i<records.length;i++){
@@ -222,6 +225,7 @@ public class TradeStoreServer {
                 maxPrice = Math.max(candidateMaxPrice, maxPrice);
             }
         }
+        System.out.println(String.format("Highest price retrieval for %s took %d ms",ticker,System.currentTimeMillis() - timestamp));
         return maxPrice;
     }
 
@@ -231,6 +235,7 @@ public class TradeStoreServer {
      * @return
      */
     public long getMostRecentTradeTimestampForTicker(String ticker){
+        long timestamp = System.currentTimeMillis();
         Record[] records = aerospikeClient.get(aerospikeClient.batchPolicyDefault,contractRecordASKeysForTicker(ticker));
         long maxTimestamp = 0;
         for(int i=0;i<records.length;i++){
@@ -239,6 +244,7 @@ public class TradeStoreServer {
                 maxTimestamp = Math.max(candidateMaxTimestamp, maxTimestamp);
             }
         }
+        System.out.println(String.format("Most recent timestamp for %s took %d ms",ticker,System.currentTimeMillis() - timestamp));
         return maxTimestamp;
     }
 
@@ -249,6 +255,7 @@ public class TradeStoreServer {
      * @return
      */
     public long getAggregateVolumeForTickerAndPrice(String ticker,double price){
+        long timestamp = System.currentTimeMillis();
         Record[] records = aerospikeClient.get(aerospikeClient.batchPolicyDefault,contractRecordASKeysForTicker(ticker));
         long volume = 0;
         for(int i=0;i<records.length;i++) {
@@ -259,6 +266,7 @@ public class TradeStoreServer {
                 }
             }
         }
+        System.out.println(String.format("Aggregate volume retrieval for %s, price %f, took %d ms",ticker,price,System.currentTimeMillis() - timestamp));
         return volume;
     }
 
@@ -268,6 +276,7 @@ public class TradeStoreServer {
      * @return
      */
     public long getMostRecentTradeTimestampForTickerAndPrice(String ticker,double price){
+        long timestamp = System.currentTimeMillis();
         Record[] records = aerospikeClient.get(aerospikeClient.batchPolicyDefault,contractRecordASKeysForTicker(ticker));
         long maxTimestamp = 0;
         for(int i=0;i<records.length;i++){
@@ -278,6 +287,7 @@ public class TradeStoreServer {
                 }
             }
         }
+        System.out.println(String.format("Most recent timestamp retrieval for %s, price %f, took %d ms",ticker,price,System.currentTimeMillis() - timestamp));
         return maxTimestamp;
     }
 }
