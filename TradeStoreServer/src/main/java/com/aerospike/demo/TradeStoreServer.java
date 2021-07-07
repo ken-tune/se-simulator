@@ -109,7 +109,7 @@ public class TradeStoreServer {
         }
         // Create a key
         UUID u = UUID.randomUUID();
-        Key key  = new Key(Constants.AEROSPIKE_NAMESPACE,Constants.AEROSPIKE_TRADE_SET,u.toString());
+        Key key  = new Key(Constants.TRADE_NAMESPACE,Constants.TRADE_SET,u.toString());
         // Save
         aerospikeClient.put(new WritePolicy(),key,bins);
         updateContractRecord(jsonNode);
@@ -180,14 +180,14 @@ public class TradeStoreServer {
         md5.update(stringToHash.getBytes());
         BigInteger digest = new BigInteger(1,md5.digest());
         int shardNo = digest.mod(BigInteger.valueOf(Constants.CONTRACT_RECORD_SHARD_COUNT)).intValue();
-        return new Key(Constants.AEROSPIKE_NAMESPACE,Constants.AEROSPIKE_CONTRACT_SUMMARY_SET,
+        return new Key(Constants.CONTRACT_SUMMARY_NAMESPACE,Constants.CONTRACT_SUMMARY_SET,
                 String.format("%s-%d",trade.get(Constants.TICKER_FIELD_NAME).asText(),shardNo));
     }
 
     static Key[] contractRecordASKeysForTicker(String ticker){
         Key[] keys = new Key[Constants.CONTRACT_RECORD_SHARD_COUNT];
         for(int shardNo=0;shardNo<Constants.CONTRACT_RECORD_SHARD_COUNT;shardNo++)
-        keys[shardNo] = new Key(Constants.AEROSPIKE_NAMESPACE,Constants.AEROSPIKE_CONTRACT_SUMMARY_SET,
+        keys[shardNo] = new Key(Constants.CONTRACT_SUMMARY_NAMESPACE,Constants.CONTRACT_SUMMARY_SET,
                 String.format("%s-%d",ticker,shardNo));
         return keys;
     }

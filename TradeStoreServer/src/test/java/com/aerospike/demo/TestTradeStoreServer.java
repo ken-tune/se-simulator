@@ -1,9 +1,5 @@
 package com.aerospike.demo;
 
-import com.aerospike.client.Record;
-import com.aerospike.client.Value;
-import com.aerospike.client.cdt.*;
-import com.aerospike.client.policy.WritePolicy;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -29,8 +25,8 @@ public class TestTradeStoreServer {
 
     @BeforeEach
     public void cleanData() throws IOException{
-        tradeStoreServer.aerospikeClient.truncate(tradeStoreServer.aerospikeClient.infoPolicyDefault,Constants.AEROSPIKE_NAMESPACE,Constants.AEROSPIKE_TRADE_SET,null);
-        tradeStoreServer.aerospikeClient.truncate(tradeStoreServer.aerospikeClient.infoPolicyDefault,Constants.AEROSPIKE_NAMESPACE,Constants.AEROSPIKE_CONTRACT_SUMMARY_SET,null);
+        tradeStoreServer.aerospikeClient.truncate(tradeStoreServer.aerospikeClient.infoPolicyDefault,Constants.TRADE_NAMESPACE,Constants.TRADE_SET,null);
+        tradeStoreServer.aerospikeClient.truncate(tradeStoreServer.aerospikeClient.infoPolicyDefault,Constants.CONTRACT_SUMMARY_NAMESPACE,Constants.CONTRACT_SUMMARY_SET,null);
 
     }
 
@@ -188,8 +184,8 @@ public class TestTradeStoreServer {
 
     @AfterEach
     public void cleanup(){
-//        tradeStoreServer.aerospikeClient.truncate(tradeStoreServer.aerospikeClient.infoPolicyDefault,Constants.AEROSPIKE_NAMESPACE,Constants.AEROSPIKE_TRADE_SET,null);
-//        tradeStoreServer.aerospikeClient.truncate(tradeStoreServer.aerospikeClient.infoPolicyDefault,Constants.AEROSPIKE_NAMESPACE,Constants.AEROSPIKE_CONTRACT_SUMMARY_SET,null);
+//        tradeStoreServer.aerospikeClient.truncate(tradeStoreServer.aerospikeClient.infoPolicyDefault,Constants.TRADE_NAMESPACE,Constants.TRADE_SET,null);
+//        tradeStoreServer.aerospikeClient.truncate(tradeStoreServer.aerospikeClient.infoPolicyDefault,Constants.TRADE_NAMESPACE,Constants.CONTRACT_SUMMARY_SET,null);
 
     }
 

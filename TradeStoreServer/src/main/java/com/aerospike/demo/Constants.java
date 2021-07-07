@@ -28,11 +28,11 @@ public class Constants {
     public static final String AEROSPIKE_HOST_PROPERTY_NAME = "AEROSPIKE_HOST";
     public static String AEROSPIKE_HOST = getPropertyValue(AEROSPIKE_HOST_PROPERTY_NAME);
 
-    public static final String AEROSPIKE_NAMESPACE_PROPERTY_NAME = "AEROSPIKE_NAMESPACE";
-    public static String AEROSPIKE_NAMESPACE = getPropertyValue(AEROSPIKE_NAMESPACE_PROPERTY_NAME);
+    public static final String TRADE_NAMESPACE_PROPERTY_NAME = "TRADE_NAMESPACE";
+    public static String TRADE_NAMESPACE = getPropertyValue(TRADE_NAMESPACE_PROPERTY_NAME);
 
-    public static final String AEROSPIKE_TRADE_SET_PROPERTY_NAME = "AEROSPIKE_TRADE_SET";
-    public static String AEROSPIKE_TRADE_SET = getPropertyValue(AEROSPIKE_TRADE_SET_PROPERTY_NAME);
+    public static final String TRADE_SET_PROPERTY_NAME = "TRADE_SET";
+    public static String TRADE_SET = getPropertyValue(TRADE_SET_PROPERTY_NAME);
 
     public static final String WEBSERVER_PORT_PROPERTY_NAME = "WEBSERVER_PORT";
     public static int WEBSERVER_PORT = Integer.parseInt(getPropertyValue(WEBSERVER_PORT_PROPERTY_NAME));
@@ -40,8 +40,11 @@ public class Constants {
     public static final String DEBUG_PROPERTY_NAME = "DEBUG";
     public static boolean DEBUG = Boolean.parseBoolean(getPropertyValue(DEBUG_PROPERTY_NAME));
 
-    public static final String AEROSPIKE_CONTRACT_SUMMARY_SET_PROPERTY_NAME = "AEROSPIKE_CONTRACT_SUMMARY_SET";
-    public static String AEROSPIKE_CONTRACT_SUMMARY_SET = getPropertyValue(AEROSPIKE_CONTRACT_SUMMARY_SET_PROPERTY_NAME);
+    public static final String CONTRACT_SUMMARY_NAMESPACE_PROPERTY_NAME="CONTRACT_SUMMARY_NAMESPACE";
+    public static String CONTRACT_SUMMARY_NAMESPACE = getPropertyValue(CONTRACT_SUMMARY_NAMESPACE_PROPERTY_NAME);
+
+    public static final String CONTRACT_SUMMARY_SET_PROPERTY_NAME = "CONTRACT_SUMMARY_SET";
+    public static String CONTRACT_SUMMARY_SET = getPropertyValue(CONTRACT_SUMMARY_SET_PROPERTY_NAME);
 
     public static final String CONTRACT_RECORD_SHARD_COUNT_PROPERTY_NAME = "CONTRACT_RECORD_SHARD_COUNT";
     public static int CONTRACT_RECORD_SHARD_COUNT = Integer.parseInt(getPropertyValue(CONTRACT_RECORD_SHARD_COUNT_PROPERTY_NAME));

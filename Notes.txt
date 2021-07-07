@@ -2,19 +2,20 @@ Next Steps
 ----------
 
 Running vs clustered Aerospike in K8s
-How do you change the sharding dynamically
 Running in an AWS context scalably
-Moving into AS GitHub
 Put together a small webserver showing prices
-Move summary records to in memory namespace
+Moving into AS GitHub
 
 DONE
+----
 
 Trade generator is done
 Re-arrange k8s so asset order creation makes more sense
 TradeStoreServer as a service - can you scale it
 Better pricing evolution
 Measuring latency on batch read
+How do you change the sharding dynamically
+Move summary records to in memory namespace
 
 TESTS
 -----
