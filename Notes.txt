@@ -16,6 +16,7 @@ Better pricing evolution
 Measuring latency on batch read
 How do you change the sharding dynamically
 Move summary records to in memory namespace
+Parameterise the build file so different dockerhub accounts can be used
 
 TESTS
 -----
