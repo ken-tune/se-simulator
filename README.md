@@ -8,6 +8,10 @@ What happens is
 2. They get sent to a processing server
 3. The server saves the raw trades and aggregate records to an Aerospike database, summarizing trading activity on a per contract basis and also on a per contract & price basis. The summary records are sharded in order to manage load.
 
+## Pre-requisites
+
+You will need _kubectl_ and access to a Kubernetes cluster e.g. Docker Desktop or EKS.
+
 ## Quick Start
 
 To run the demo, from the root directory of this repository
