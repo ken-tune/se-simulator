@@ -1,5 +1,6 @@
 #!/bin/bash
 
+kubectl create configmap aero-conf --from-file=config/aerospike.conf
 kubectl apply -f k8s/demo.yml
 echo
 echo Wait till all pods in the running state then ctrl-c
