@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOCKERHUB_ACCOUNT=ktune
+source repository-env.sh
 
 # Run trade-date-gen build with --no-cache to make sure we always get the latest code
 docker build --no-cache -t trade-data-gen -t ${DOCKERHUB_ACCOUNT}/se-simulator:tradeGen -f "docker/Dockerfile-tradeGen" docker

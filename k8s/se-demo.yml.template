@@ -52,7 +52,7 @@ spec:
     spec:
       containers:
       - name: trade-store-server
-        image: ktune/se-simulator:trade-store-server
+        image: $DOCKERHUB_ACCOUNT/se-simulator:trade-store-server
         env:
         - name: CONTRACT_RECORD_SHARD_COUNT
           value: "10"
@@ -85,7 +85,7 @@ spec:
     spec:
       containers:
       - name: trade-data-gen
-        image: ktune/se-simulator:tradeGen
+        image: $DOCKERHUB_ACCOUNT/se-simulator:tradeGen
         env:
         - name: ITERATIONS_PER_SECOND
           value: "1"
