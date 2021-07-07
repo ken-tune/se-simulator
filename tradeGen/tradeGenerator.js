@@ -48,7 +48,6 @@ function nextIterationDebug(){
 	setTimeout(nextIterationDebug,1000 / ITERATIONS_PER_SECOND);
 }
 
-// nextIterationDebug();
 
 function nextIteration(){
 	for(var i = 0;i<TRADES_PER_ITERATION;i++){
@@ -62,4 +61,8 @@ function nextIteration(){
 	setTimeout(nextIteration,Math.ceil(1000 / ITERATIONS_PER_SECOND))
 }
 
- nextIteration();
+console.log("Running with "+ITERATIONS_PER_SECOND+ " iterations per second and")
+console.log(TRADES_PER_ITERATION + " trades per iteration\n\n")
+
+//nextIterationDebug();
+nextIteration();
