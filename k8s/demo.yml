@@ -73,3 +73,8 @@ spec:
       containers:
       - name: trade-data-gen
         image: ktune/se-simulator:tradeGen
+        env:
+        - name: ITERATIONS_PER_SECOND
+          value: "1"
+        - name: TRADES_PER_ITERATION
+          value: "100"
