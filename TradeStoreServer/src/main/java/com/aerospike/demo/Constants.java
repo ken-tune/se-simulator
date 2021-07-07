@@ -26,25 +26,25 @@ public class Constants {
     }
 
     public static final String AEROSPIKE_HOST_PROPERTY_NAME = "AEROSPIKE_HOST";
-    public static String AEROSPIKE_HOST = (String)properties.get(AEROSPIKE_HOST_PROPERTY_NAME);
+    public static String AEROSPIKE_HOST = getPropertyValue(AEROSPIKE_HOST_PROPERTY_NAME);
 
     public static final String AEROSPIKE_NAMESPACE_PROPERTY_NAME = "AEROSPIKE_NAMESPACE";
-    public static String AEROSPIKE_NAMESPACE = (String)properties.get(AEROSPIKE_NAMESPACE_PROPERTY_NAME);
+    public static String AEROSPIKE_NAMESPACE = getPropertyValue(AEROSPIKE_NAMESPACE_PROPERTY_NAME);
 
     public static final String AEROSPIKE_TRADE_SET_PROPERTY_NAME = "AEROSPIKE_TRADE_SET";
-    public static String AEROSPIKE_TRADE_SET = (String)properties.get(AEROSPIKE_TRADE_SET_PROPERTY_NAME);
+    public static String AEROSPIKE_TRADE_SET = getPropertyValue(AEROSPIKE_TRADE_SET_PROPERTY_NAME);
 
     public static final String WEBSERVER_PORT_PROPERTY_NAME = "WEBSERVER_PORT";
-    public static int WEBSERVER_PORT = Integer.parseInt((String)properties.get(WEBSERVER_PORT_PROPERTY_NAME));
+    public static int WEBSERVER_PORT = Integer.parseInt(getPropertyValue(WEBSERVER_PORT_PROPERTY_NAME));
 
     public static final String DEBUG_PROPERTY_NAME = "DEBUG";
-    public static boolean DEBUG = Boolean.parseBoolean((String)properties.get(DEBUG_PROPERTY_NAME));
+    public static boolean DEBUG = Boolean.parseBoolean(getPropertyValue(DEBUG_PROPERTY_NAME));
 
     public static final String AEROSPIKE_CONTRACT_SUMMARY_SET_PROPERTY_NAME = "AEROSPIKE_CONTRACT_SUMMARY_SET";
-    public static String AEROSPIKE_CONTRACT_SUMMARY_SET = (String)properties.get(AEROSPIKE_CONTRACT_SUMMARY_SET_PROPERTY_NAME);
+    public static String AEROSPIKE_CONTRACT_SUMMARY_SET = getPropertyValue(AEROSPIKE_CONTRACT_SUMMARY_SET_PROPERTY_NAME);
 
     public static final String CONTRACT_RECORD_SHARD_COUNT_PROPERTY_NAME = "CONTRACT_RECORD_SHARD_COUNT";
-    public static int CONTRACT_RECORD_SHARD_COUNT = Integer.parseInt((String)properties.get(CONTRACT_RECORD_SHARD_COUNT_PROPERTY_NAME));
+    public static int CONTRACT_RECORD_SHARD_COUNT = Integer.parseInt(getPropertyValue(CONTRACT_RECORD_SHARD_COUNT_PROPERTY_NAME));
 
     public static final String CONTRACT_RECORD_BIN = "contractRecord";
     public static final String CONTRACT_PRICE_SUMMARY_BIN = "cntrctPriceSum";
@@ -52,4 +52,15 @@ public class Constants {
     public static final String VOLUME_FIELD_NAME = "volume";
     public static final String PRICE_FIELD_NAME = "price";
     public static final String TIMESTAMP_FIELD_NAME = "timestamp";
+
+    /**
+     * Get property value - but allow this to be overridden with a value from the environment
+     * @param propertyName
+     * @return
+     */
+    private static String getPropertyValue(String propertyName){
+        String propertyValue = System.getenv(propertyName) != null ? System.getenv(propertyName) : (String)properties.get(propertyName);
+        System.out.println(String.format("Property %s set to value %s",propertyName,propertyValue));
+        return propertyValue;
+    }
 }
