@@ -8,7 +8,7 @@ const util = require("./modules/utility")
 const ITERATIONS_PER_SECOND = util.getEnvironmentValue("ITERATIONS_PER_SECOND",1);
 const TRADES_PER_ITERATION = util.getEnvironmentValue("TRADES_PER_ITERATION",1);
 const DESTINATION_HOST = util.getEnvironmentValue("DESTINATION_HOST","localhost")
-const DESTINATION_PORT = util.getEnvironmentValue("DESTINATION_PORT",8080)
+const DESTINATION_PORT = util.getEnvironmentValue("DESTINATION_PORT",7000)
 
 // Stock Config
 var stockConfigList=[];
@@ -32,7 +32,7 @@ var http = require('http')
 const options = {
   hostname: DESTINATION_HOST,
   port: DESTINATION_PORT,
-  path: '/',
+  path: '/tickerPrice',
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'

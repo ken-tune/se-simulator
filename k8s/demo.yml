@@ -7,7 +7,7 @@ metadata:
   }
 spec:
   containers:
-    - image: ktune/se-simulator:trade-store-server
+    - image: pbanavara/se-simulator:trade-store-server
       name: trade-store-server
       ports:
         - containerPort: 8080
@@ -43,7 +43,7 @@ spec:
     spec:
       containers:
       - name: trade-data-gen
-        image: ktune/se-simulator:tradeGen
+        image: pbanavara/se-simulator:tradeGen
 ---
 apiVersion: v1
 kind: Pod

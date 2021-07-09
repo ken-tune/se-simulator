@@ -1,0 +1,40 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Stock Ticker API",
+    "description": "Demo API for stock ticker operations",
+    "version": "1.0"
+  },
+  "paths": {
+    "/tickerPrice": {
+      "post": {
+        "tags": [
+          "Ticker"
+        ],
+        "summary": "Get the ticker symbol data",
+        "operationId": "tickerData",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TickerData"
+              }
+            }
+          }
+        },
+        "responses": {
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

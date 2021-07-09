@@ -16,73 +16,11 @@ import java.util.*;
 
 public class TradeStoreServer {
     AerospikeClient aerospikeClient;
-    HttpServer httpServer;
-
-    // Initialise TradeStore server
-    public static void main(String[] args) throws IOException{
-        TradeStoreServer s = new TradeStoreServer();
-        s.startServer();
-    }
 
     // Constructor
     public TradeStoreServer() throws IOException{
-        httpServer = HttpServer.create(new InetSocketAddress(Constants.WEBSERVER_PORT), 0);
+        //httpServer = HttpServer.create(new InetSocketAddress(Constants.WEBSERVER_PORT), 0);
         aerospikeClient = new AerospikeClient(Constants.AEROSPIKE_HOST,3000);
-    }
-
-    // Start Server
-    public void startServer(){
-        httpServer.createContext("/", new RootHandler());
-        httpServer.setExecutor(null);
-        httpServer.start();
-        System.out.println("Running on "+Constants.WEBSERVER_PORT);
-    }
-
-    // Handle trade messages
-    public class RootHandler implements HttpHandler {
-
-        @Override
-        public void handle(HttpExchange he) throws IOException {
-            // Get trade message
-            InputStreamReader isr = new InputStreamReader(he.getRequestBody(), "utf-8");
-            BufferedReader br = new BufferedReader(isr);
-            String inputString = br.readLine();
-            br.close();
-            // Set up JSON & output objects
-            JsonNode jsonNode = null;
-            OutputStream os = he.getResponseBody();
-            // Parse as JSON
-            try {
-                jsonNode = convertStringToJsonNode(inputString);
-                if (Constants.DEBUG) System.out.println(jsonNode.toString());
-            }
-            // Return exception if we can't parse JSON
-            catch(Exception e){
-                System.out.println("Can't parse "+inputString);
-                he.sendResponseHeaders(400,0);
-                os.write(("Can't parse "+inputString+"\n").getBytes());
-                os.close();
-                return;
-            }
-            try{
-                saveTrade(jsonNode);
-                he.sendResponseHeaders(200,0);
-                os.write(("Trade " + inputString+ "saved\n").getBytes());
-            }
-            catch(ParseException e){
-                System.out.println(e.toString());
-                System.out.println(e.getMessage());
-                he.sendResponseHeaders(400,0);
-                os.write(("Incorrect JSON format\n").getBytes());
-            }
-            catch(Exception e){
-                System.out.println(e.toString());
-                System.out.println(e.getMessage());
-                he.sendResponseHeaders(500,0);
-                os.write(("System error\n").getBytes());
-            }
-            os.close();
-        }
     }
 
     // Save trade. Will throw ParseException if JSON does not fit required schema
