@@ -1,12 +1,25 @@
 #!/bin/bash
 
+echo 'Requires kubectl & helm'
+echo
+sleep 10
+
 # Get required environment variables
 source repository-env.sh
 
 # Substitute in the k8s yml as needed
 sed "s/\$DOCKERHUB_ACCOUNT/$DOCKERHUB_ACCOUNT/g" k8s/se-demo.yml.template > k8s/se-demo.yml
 
-kubectl create configmap aero-conf --from-file=config/aerospike.conf
+# Make sure you have the aerospike chart
+helm repo add aerospike https://aerospike.github.io/aerospike-kubernetes
+echo
+
+# Install Clustered Aerospike
+helm install se-demo aerospike/aerospike --set enableAerospikeMonitoring=true --set rbac.create=true --set-file aerospikeConfFile=config/aerospike.conf \
+| head -n 9
+echo
+
+# Install SE demo app
 kubectl apply -f k8s/se-demo.yml
 echo
 echo Wait till all pods in the running state then ctrl-c
