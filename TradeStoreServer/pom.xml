@@ -69,7 +69,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.aerospike.demo.TradeStoreServer</mainClass>
+                            <mainClass>com.aerospike.demo.TradeStoreReader</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

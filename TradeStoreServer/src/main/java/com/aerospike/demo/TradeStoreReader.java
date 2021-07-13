@@ -29,9 +29,9 @@ public class TradeStoreReader {
         ConcurrentLinkedDeque<SseClient> clients = new ConcurrentLinkedDeque<>();
 
         Javalin app = Javalin.create(config -> {
-                    config.registerPlugin(getConfiguredOpenApiPlugin());
-                    config.defaultContentType = "application/json";
-                    config.enableCorsForAllOrigins();
+            config.registerPlugin(getConfiguredOpenApiPlugin());
+            config.defaultContentType = "application/json";
+            config.enableCorsForAllOrigins();
         });
         /* Place holder for Server side sent events
         app.sse("/aggregatePrice/:ticker", (client) -> {
@@ -62,24 +62,19 @@ public class TradeStoreReader {
             }
         }
         */
-         app.routes(() -> {
+        app.routes(() -> {
             path("tickerAggregatePrice", () -> {
                 path(":ticker", () -> {
-                   get(TickerDataController::get);
+                    get(TickerDataController::get);
                 });
             });
             path("tickerHighestPrice", () -> {
                 path(":ticker", () -> {
-                        get(TickerHighestPriceController::get);
-                    });
+                    get(TickerHighestPriceController::get);
                 });
             });
-            path("tickerVolmeForPrice", () -> {
-                path(":ticker/:price", () -> {
-                    get(TickerAggregateVolumeController::get);
-                });
-            });
-        app.start(7000);
+        }).start(7000);
+
     }
 
     private static OpenApiPlugin getConfiguredOpenApiPlugin() {
