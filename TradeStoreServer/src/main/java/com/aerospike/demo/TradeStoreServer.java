@@ -3,6 +3,8 @@ package com.aerospike.demo;
 import com.aerospike.client.*;
 import com.aerospike.client.cdt.*;
 import com.aerospike.client.policy.WritePolicy;
+import com.aerospike.client.query.Filter;
+import com.aerospike.client.query.Statement;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
@@ -24,7 +26,7 @@ public class TradeStoreServer {
     }
 
     // Save trade. Will throw ParseException if JSON does not fit required schema
-    void saveTrade(JsonNode jsonNode) throws ParseException{
+    public void saveTrade(JsonNode jsonNode) throws ParseException{
         // Put the Aerospike object together
         int fields = jsonNode.size();
         Bin[] bins = new Bin[fields];
