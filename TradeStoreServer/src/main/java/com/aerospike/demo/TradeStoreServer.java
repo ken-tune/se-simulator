@@ -99,6 +99,9 @@ public class TradeStoreServer {
                     os.write(("System error\n").getBytes());
                 }
                 inputString = br.readLine();
+                if(inputString == null){
+                    if(Constants.DEBUG) System.out.println("inputString is null");
+                }
                 if (Constants.DEBUG) System.out.println("At line 102");
             }while(inputString != null);
             br.close();
