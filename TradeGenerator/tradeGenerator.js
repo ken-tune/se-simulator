@@ -54,6 +54,8 @@ function nextIteration(){
 		var selectedStock = stockConfigList[stats.getRandomInt(stockConfigList.length)]
 		var data = JSON.stringify(tradeDataGen.simulatedTrade(selectedStock));
 		options.headers["Content-Length"] = data.length;
+		// options.headers["Connection"] = "Keep-Alive"
+		options.headers["Keep-Alive"] = "timeout=5, max=1000";
 		req = http.request(options);
 		req.write(data)
 		req.end()	
