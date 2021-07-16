@@ -49,6 +49,10 @@ public class Constants {
     public static final String CONTRACT_RECORD_SHARD_COUNT_PROPERTY_NAME = "CONTRACT_RECORD_SHARD_COUNT";
     public static int CONTRACT_RECORD_SHARD_COUNT = Integer.parseInt(getPropertyValue(CONTRACT_RECORD_SHARD_COUNT_PROPERTY_NAME));
 
+    public static final String AERO_MAX_CONNS_PER_NODE_PROPERTY_NAME = "AERO_MAX_CONNS_PER_NODE";
+    public static int AERO_MAX_CONNS_PER_NODE = Integer.parseInt(getPropertyValue(AERO_MAX_CONNS_PER_NODE_PROPERTY_NAME));
+
+
     public static final String CONTRACT_RECORD_BIN = "contractRecord";
     public static final String CONTRACT_PRICE_SUMMARY_BIN = "cntrctPriceSum";
     public static final String TICKER_FIELD_NAME = "ticker";

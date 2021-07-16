@@ -2,6 +2,7 @@ package com.aerospike.demo;
 
 import com.aerospike.client.*;
 import com.aerospike.client.cdt.*;
+import com.aerospike.client.policy.ClientPolicy;
 import com.aerospike.client.policy.WritePolicy;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +41,9 @@ public class TradeStoreServer {
     // Constructor
     public TradeStoreServer() throws IOException{
         httpServer = HttpServer.create(new InetSocketAddress(Constants.WEBSERVER_PORT), 0);
-        aerospikeClient = new AerospikeClient(Constants.AEROSPIKE_HOST,3000);
+        ClientPolicy clientPolicy = new ClientPolicy();
+        clientPolicy.maxConnsPerNode = Constants.AERO_MAX_CONNS_PER_NODE;
+        aerospikeClient = new AerospikeClient(clientPolicy,Constants.AEROSPIKE_HOST,3000);
     }
 
     // Start Server
