@@ -62,7 +62,7 @@ public class TradeStoreServer {
             // Get trade message
             InputStreamReader isr = new InputStreamReader(he.getRequestBody(), "utf-8");
             BufferedReader br = new BufferedReader(isr);
-            String inputString = br.readLine();
+            String inputString;
             OutputStream os = he.getResponseBody();
             ;
             JsonNode jsonNode = null;
@@ -81,7 +81,6 @@ public class TradeStoreServer {
                 }
                 try {
                     saveTrade(jsonNode);
-                    he.sendResponseHeaders(HttpUtilities.HttpCodes.OK, 0);
                     os.write(("Trade " + inputString + "saved\n").getBytes());
                 } catch (ParseException e) {
                     System.out.println(e.toString());
@@ -98,6 +97,7 @@ public class TradeStoreServer {
                 }
                 if (Constants.DEBUG) System.out.println("At line 102");
             }
+            he.sendResponseHeaders(HttpUtilities.HttpCodes.OK, 0);
             br.close();
             os.close();
         }
