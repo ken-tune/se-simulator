@@ -66,6 +66,7 @@ public class TradeStoreServer {
             OutputStream os = he.getResponseBody();
             ;
             JsonNode jsonNode = null;
+            he.sendResponseHeaders(HttpUtilities.HttpCodes.OK, 0);
             while ((inputString = br.readLine()) != null) {
                 // Parse as JSON
                 try {
@@ -97,7 +98,6 @@ public class TradeStoreServer {
                 }
                 if (Constants.DEBUG) System.out.println("At line 102");
             }
-            he.sendResponseHeaders(HttpUtilities.HttpCodes.OK, 0);
             br.close();
             os.close();
         }
