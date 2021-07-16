@@ -63,40 +63,44 @@ public class TradeStoreServer {
             InputStreamReader isr = new InputStreamReader(he.getRequestBody(), "utf-8");
             BufferedReader br = new BufferedReader(isr);
             String inputString = br.readLine();
-            br.close();
-            // Set up JSON & output objects
+            OutputStream os = he.getResponseBody();;
             JsonNode jsonNode = null;
-            OutputStream os = he.getResponseBody();
-            // Parse as JSON
-            try {
-                jsonNode = convertStringToJsonNode(inputString);
-                if (Constants.DEBUG) System.out.println(jsonNode.toString());
-            }
-            // Return exception if we can't parse JSON
-            catch(Exception e){
-                System.out.println("Can't parse "+inputString);
-                he.sendResponseHeaders(HttpUtilities.HttpCodes.CLIENT_REQUEST_ERROR,0);
-                os.write(("Can't parse "+inputString+"\n").getBytes());
-                os.close();
-                return;
-            }
-            try{
-                saveTrade(jsonNode);
-                he.sendResponseHeaders(HttpUtilities.HttpCodes.OK,0);
-                os.write(("Trade " + inputString+ "saved\n").getBytes());
-            }
-            catch(ParseException e){
-                System.out.println(e.toString());
-                System.out.println(e.getMessage());
-                he.sendResponseHeaders(HttpUtilities.HttpCodes.CLIENT_REQUEST_ERROR,0);
-                os.write(("Incorrect JSON format\n").getBytes());
-            }
-            catch(Exception e){
-                System.out.println(e.toString());
-                System.out.println(e.getMessage());
-                he.sendResponseHeaders(HttpUtilities.HttpCodes.SERVER_ERROR,0);
-                os.write(("System error\n").getBytes());
-            }
+            do {
+                if(inputString == null){
+                    he.sendResponseHeaders(HttpUtilities.HttpCodes.CLIENT_REQUEST_ERROR, 0);
+                    os.write(("Null input string\n").getBytes());
+                    break;
+                }
+                // Parse as JSON
+                try {
+                    jsonNode = convertStringToJsonNode(inputString);
+                    if (Constants.DEBUG) System.out.println(jsonNode.toString());
+                }
+                // Return exception if we can't parse JSON
+                catch (Exception e) {
+                    System.out.println("Can't parse " + inputString);
+                    he.sendResponseHeaders(HttpUtilities.HttpCodes.CLIENT_REQUEST_ERROR, 0);
+                    os.write(("Can't parse " + inputString + "\n").getBytes());
+                    break;
+                }
+                try {
+                    saveTrade(jsonNode);
+                    he.sendResponseHeaders(HttpUtilities.HttpCodes.OK, 0);
+                    os.write(("Trade " + inputString + "saved\n").getBytes());
+                } catch (ParseException e) {
+                    System.out.println(e.toString());
+                    System.out.println(e.getMessage());
+                    he.sendResponseHeaders(HttpUtilities.HttpCodes.CLIENT_REQUEST_ERROR, 0);
+                    os.write(("Incorrect JSON format\n").getBytes());
+                } catch (Exception e) {
+                    System.out.println(e.toString());
+                    System.out.println(e.getMessage());
+                    he.sendResponseHeaders(HttpUtilities.HttpCodes.SERVER_ERROR, 0);
+                    os.write(("System error\n").getBytes());
+                }
+                inputString = br.readLine();
+            }while(inputString != null);
+            br.close();
             os.close();
         }
     }
