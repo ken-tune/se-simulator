@@ -99,6 +99,7 @@ public class TradeStoreServer {
                     os.write(("System error\n").getBytes());
                 }
                 inputString = br.readLine();
+                if (Constants.DEBUG) System.out.println("At line 102");
             }while(inputString != null);
             br.close();
             os.close();
