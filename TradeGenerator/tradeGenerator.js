@@ -49,16 +49,22 @@ function nextIterationDebug(){
 }
 
 
+const keepAliveAgent = new http.Agent({ keepAlive: true });
+const requestOptions = {
+	agent: keepAliveAgent,
+  	headers: {
+    		Connection: 'keep-alive'
+  	}
+}
+
 function nextIteration(){
-	req = http.request(options);	
+	req = http.request(options);
 	for(var i = 0;i<TRADES_PER_ITERATION;i++){
 		var selectedStock = stockConfigList[stats.getRandomInt(stockConfigList.length)]
 		var data = JSON.stringify(tradeDataGen.simulatedTrade(selectedStock));
-		//options.headers["Content-Length"] = data.length;
-		// options.headers["Connection"] = "Keep-Alive"
-		//options.headers["Keep-Alive"] = "timeout=5, max=1000";
-		req.write(data)
+		req.write(data+"\n")
 	}
+
 	req.end()	
 	setTimeout(nextIteration,Math.ceil(1000 / ITERATIONS_PER_SECOND))
 }
