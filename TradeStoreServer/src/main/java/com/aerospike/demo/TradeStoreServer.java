@@ -28,7 +28,7 @@ public class TradeStoreServer {
     public static class PERMITTED_REQUEST_QUANTITIES{
         public static final String VOLUME="volume";
         public static final String LAST_TIMESTAMP = "lastTimestamp";
-        public static final String HIGHEST_PRICE= "highestPrice"
+        public static final String HIGHEST_PRICE= "highestPrice";
     }
 
     // Initialise TradeStore server
@@ -47,7 +47,6 @@ public class TradeStoreServer {
     public void startServer(){
         httpServer.createContext("/", new RootHandler());
         httpServer.setExecutor(java.util.concurrent.Executors.newCachedThreadPool());
-        httpServer.setExecutor(null);
         httpServer.start();
         System.out.println("Running on "+Constants.WEBSERVER_PORT);
     }
@@ -104,8 +103,17 @@ public class TradeStoreServer {
         public void handle(HttpExchange he) throws IOException {
             OutputStream os = he.getResponseBody();
             if (he.getRequestMethod().equals(HttpUtilities.HttpMethods.GET)) {
-                Map<String, String> parametersAsMap = HttpUtilities.getParametersFromURI(he.getRequestURI().toString());
-                if (parametersAsMap.get(QUANTITY_REQUEST_FIELD_NAME) == null) {
+                Map<String, String> parametersAsMap = null;
+                try {
+                    parametersAsMap = HttpUtilities.getParametersFromURI(he.getRequestURI().toString());
+                }
+                catch(ParseException e){
+
+                }
+                if(parametersAsMap == null){
+                    he.sendResponseHeaders(HttpUtilities.HttpCodes.CLIENT_REQUEST_ERROR, 0);
+                    os.write(String.format("Error parsing parameters %s",he.getRequestURI().toString()).getBytes());
+                } else if (parametersAsMap.get(QUANTITY_REQUEST_FIELD_NAME) == null) {
                     he.sendResponseHeaders(HttpUtilities.HttpCodes.CLIENT_REQUEST_ERROR, 0);
                     os.write("A quantity field is expected".getBytes());
                 } else if (parametersAsMap.get(TICKER_REQUEST_FIELD_NAME) == null) {
@@ -130,7 +138,10 @@ public class TradeStoreServer {
                         }
                         default: {
                             he.sendResponseHeaders(HttpUtilities.HttpCodes.CLIENT_REQUEST_ERROR,0);
-                            os.write(String.format("%s is not a recognized value for the %s field",parametersAsMap.get(QUANTITY_REQUEST_FIELD_NAME),QUANTITY_REQUEST_FIELD_NAME);
+                            os.write(
+                                    String.format("%s is not a recognized value for the %s field",parametersAsMap.get(QUANTITY_REQUEST_FIELD_NAME),QUANTITY_REQUEST_FIELD_NAME)
+                                    .getBytes()
+                            );
                         }
                     }
                 }
