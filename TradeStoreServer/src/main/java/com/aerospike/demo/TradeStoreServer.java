@@ -81,25 +81,23 @@ public class TradeStoreServer {
                 }
                 try {
                     saveTrade(jsonNode);
-                    he.sendResponseHeaders(HttpUtilities.HttpCodes.OK, 0);
                     os.write(("Trade " + inputString + "saved\n").getBytes());
                 } catch (ParseException e) {
                     System.out.println(e.toString());
                     System.out.println(e.getMessage());
                     he.sendResponseHeaders(HttpUtilities.HttpCodes.CLIENT_REQUEST_ERROR, 0);
                     os.write(("Incorrect JSON format\n").getBytes());
+                    return;
                 } catch (Exception e) {
                     System.out.println(e.toString());
                     System.out.println(e.getMessage());
                     he.sendResponseHeaders(HttpUtilities.HttpCodes.SERVER_ERROR, 0);
                     os.write(("System error\n").getBytes());
-                }
-                inputString = br.readLine();
-                if (inputString == null) {
-                    if (Constants.DEBUG) System.out.println("inputString is null");
+                    return;
                 }
                 if (Constants.DEBUG) System.out.println("At line 102");
             }
+            he.sendResponseHeaders(HttpUtilities.HttpCodes.OK, 0);
             br.close();
             os.close();
         }
