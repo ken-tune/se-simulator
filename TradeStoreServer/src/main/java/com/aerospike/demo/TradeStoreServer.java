@@ -77,7 +77,7 @@ public class TradeStoreServer {
                     System.out.println("Can't parse " + inputString);
                     he.sendResponseHeaders(HttpUtilities.HttpCodes.CLIENT_REQUEST_ERROR, 0);
                     os.write(("Can't parse " + inputString + "\n").getBytes());
-                    break;
+                    return;
                 }
                 try {
                     saveTrade(jsonNode);
