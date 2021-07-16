@@ -1,7 +1,6 @@
 Next Steps
 ----------
 
-Running vs clustered Aerospike in K8s
 Running in an AWS context scalably
 Put together a small webserver showing prices
 Moving into AS GitHub
@@ -17,6 +16,7 @@ Measuring latency on batch read
 How do you change the sharding dynamically
 Move summary records to in memory namespace
 Parameterise the build file so different dockerhub accounts can be used
+Running vs clustered Aerospike in K8s
 
 TESTS
 -----

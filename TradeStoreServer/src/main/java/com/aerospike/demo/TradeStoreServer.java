@@ -21,6 +21,16 @@ public class TradeStoreServer {
     AerospikeClient aerospikeClient;
     HttpServer httpServer;
 
+    // Used to identify the type of quantity required
+    public static final String QUANTITY_REQUEST_FIELD_NAME = "quantity";
+    public static final String TICKER_REQUEST_FIELD_NAME = "ticker";
+
+    public static class PERMITTED_REQUEST_QUANTITIES{
+        public static final String VOLUME="volume";
+        public static final String LAST_TIMESTAMP = "lastTimestamp";
+        public static final String HIGHEST_PRICE= "highestPrice"
+    }
+
     // Initialise TradeStore server
     public static void main(String[] args) throws IOException{
         TradeStoreServer s = new TradeStoreServer();
@@ -36,6 +46,7 @@ public class TradeStoreServer {
     // Start Server
     public void startServer(){
         httpServer.createContext("/", new RootHandler());
+        httpServer.setExecutor(java.util.concurrent.Executors.newCachedThreadPool());
         httpServer.setExecutor(null);
         httpServer.start();
         System.out.println("Running on "+Constants.WEBSERVER_PORT);
@@ -62,32 +73,70 @@ public class TradeStoreServer {
             // Return exception if we can't parse JSON
             catch(Exception e){
                 System.out.println("Can't parse "+inputString);
-                he.sendResponseHeaders(400,0);
+                he.sendResponseHeaders(HttpUtilities.HttpCodes.CLIENT_REQUEST_ERROR,0);
                 os.write(("Can't parse "+inputString+"\n").getBytes());
                 os.close();
                 return;
             }
             try{
                 saveTrade(jsonNode);
-                he.sendResponseHeaders(200,0);
+                he.sendResponseHeaders(HttpUtilities.HttpCodes.OK,0);
                 os.write(("Trade " + inputString+ "saved\n").getBytes());
             }
             catch(ParseException e){
                 System.out.println(e.toString());
                 System.out.println(e.getMessage());
-                he.sendResponseHeaders(400,0);
+                he.sendResponseHeaders(HttpUtilities.HttpCodes.CLIENT_REQUEST_ERROR,0);
                 os.write(("Incorrect JSON format\n").getBytes());
             }
             catch(Exception e){
                 System.out.println(e.toString());
                 System.out.println(e.getMessage());
-                he.sendResponseHeaders(500,0);
+                he.sendResponseHeaders(HttpUtilities.HttpCodes.SERVER_ERROR,0);
                 os.write(("System error\n").getBytes());
             }
             os.close();
         }
     }
 
+    public class AggregateDateForContractHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            OutputStream os = he.getResponseBody();
+            if (he.getRequestMethod().equals(HttpUtilities.HttpMethods.GET)) {
+                Map<String, String> parametersAsMap = HttpUtilities.getParametersFromURI(he.getRequestURI().toString());
+                if (parametersAsMap.get(QUANTITY_REQUEST_FIELD_NAME) == null) {
+                    he.sendResponseHeaders(HttpUtilities.HttpCodes.CLIENT_REQUEST_ERROR, 0);
+                    os.write("A quantity field is expected".getBytes());
+                } else if (parametersAsMap.get(TICKER_REQUEST_FIELD_NAME) == null) {
+                    he.sendResponseHeaders(HttpUtilities.HttpCodes.CLIENT_REQUEST_ERROR, 0);
+                    os.write("A ticker field is expected".getBytes());
+                } else {
+                    switch (parametersAsMap.get(QUANTITY_REQUEST_FIELD_NAME)) {
+                        case PERMITTED_REQUEST_QUANTITIES.VOLUME: {
+                            he.sendResponseHeaders(HttpUtilities.HttpCodes.OK,0);
+                            os.write(Long.toString(getAggregateVolumeForTicker(parametersAsMap.get(TICKER_REQUEST_FIELD_NAME))).getBytes());
+                            break;
+                        }
+                        case PERMITTED_REQUEST_QUANTITIES.HIGHEST_PRICE: {
+                            he.sendResponseHeaders(HttpUtilities.HttpCodes.OK,0);
+                            os.write(Double.toString(getHighestPriceTradedForTicker(parametersAsMap.get(TICKER_REQUEST_FIELD_NAME))).getBytes());
+                            break;
+                        }
+                        case PERMITTED_REQUEST_QUANTITIES.LAST_TIMESTAMP: {
+                            he.sendResponseHeaders(HttpUtilities.HttpCodes.OK,0);
+                            os.write(Long.toString(getMostRecentTradeTimestampForTicker(parametersAsMap.get(TICKER_REQUEST_FIELD_NAME))).getBytes());
+                            break;
+                        }
+                        default: {
+                            he.sendResponseHeaders(HttpUtilities.HttpCodes.CLIENT_REQUEST_ERROR,0);
+                            os.write(String.format("%s is not a recognized value for the %s field",parametersAsMap.get(QUANTITY_REQUEST_FIELD_NAME),QUANTITY_REQUEST_FIELD_NAME);
+                        }
+                    }
+                }
+            }
+        }
+    }
     // Save trade. Will throw ParseException if JSON does not fit required schema
     void saveTrade(JsonNode jsonNode) throws ParseException{
         // Put the Aerospike object together
