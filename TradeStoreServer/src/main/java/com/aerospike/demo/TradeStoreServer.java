@@ -137,6 +137,11 @@ public class TradeStoreServer {
     public long getMostRecentTradeTimestampForTicker(String ticker){
         Record r = aerospikeClient.operate(aerospikeClient.writePolicyDefault,TradeStoreServer.contractRecordASKeyForTicker(ticker),
                 ListOperation.getByIndex(Constants.CONTRACT_RECORD_BIN,0,ListReturnType.VALUE, CTX.mapKey(Value.get(Constants.TIMESTAMP_FIELD_NAME))));
+
+        Bin newBin = new Bin("newBin", 100);
+        Bin otherBin = new Bin("otherBin", 100);
+        Key key = new Key("test", "test", "key");
+        aerospikeClient.operate(null, key, Operation.delete(), Operation.add(newBin), Operation.add(otherBin));
         return r.getLong(Constants.CONTRACT_RECORD_BIN);
     }
 

@@ -24,7 +24,7 @@ import static io.javalin.apibuilder.ApiBuilder.get;
 import static io.javalin.apibuilder.ApiBuilder.path;
 import static org.apache.http.client.methods.RequestBuilder.post;
 
-public class TradeStoreReader {
+public class WebServer {
     public static void main(String[] args) {
         ConcurrentLinkedDeque<SseClient> clients = new ConcurrentLinkedDeque<>();
 
@@ -73,7 +73,7 @@ public class TradeStoreReader {
                     get(TickerHighestPriceController::get);
                 });
             });
-        }).start(7000);
+        }).start(Constants.WEBSERVER_PORT);
 
     }
 

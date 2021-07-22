@@ -1,6 +1,6 @@
 package com.aerospike.demo.controllers;
 
-import com.aerospike.demo.TradeStoreReader;
+import com.aerospike.demo.WebServer;
 import com.aerospike.demo.TradeStoreServer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +19,7 @@ public class TickerDataController {
             requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = TickerData.class)}),
             responses = {
                     @OpenApiResponse(status = "200"),
-                    @OpenApiResponse(status = "500", content = {@OpenApiContent(from = TradeStoreReader.ErrorResponse.class)})
+                    @OpenApiResponse(status = "500", content = {@OpenApiContent(from = WebServer.ErrorResponse.class)})
             }
     )
 
