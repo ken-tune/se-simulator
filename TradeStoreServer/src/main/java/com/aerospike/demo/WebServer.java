@@ -73,7 +73,7 @@ public class WebServer {
                     get(TickerHighestPriceController::get);
                 });
             });
-        }).start(Constants.WEBSERVER_PORT);
+        }).start("0.0.0.0", Constants.WEBSERVER_PORT);
 
     }
 
